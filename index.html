@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Diário</title>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@300;400;600&display=swap');
 
@@ -42,10 +47,24 @@
   .btn-gold:hover { opacity:.88; }
   .err { color:#c0392b; font-size:.68rem; letter-spacing:.12em; text-align:center; margin-top:.8rem; display:none; }
 
+  /* LOADING */
+  #loading-screen { display:none; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:1.2rem; }
+  .loading-eye { font-size:2.5rem; animation:breathe 1.5s ease-in-out infinite; }
+  .loading-text { font-size:.65rem; letter-spacing:.35em; text-transform:uppercase; color:var(--muted); }
+  .loading-dots span { animation:blink 1.4s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay:.2s; }
+  .loading-dots span:nth-child(3) { animation-delay:.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
   /* APP */
   #app { display:none; }
   .topbar { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.4rem; border-bottom:1px solid rgba(201,168,76,.12); background:rgba(26,21,16,.85); position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); gap:.5rem; flex-wrap:wrap; }
+  .topbar-left { display:flex; align-items:center; gap:.8rem; }
   .topbar-title { font-family:'IM Fell English',serif; font-size:1.05rem; color:var(--gold); letter-spacing:.1em; }
+  .sync-dot { width:7px; height:7px; border-radius:50%; background:#7aab6e; flex-shrink:0; transition:background .3s; }
+  .sync-dot.syncing { background:var(--gold); animation:pulse-dot .8s ease-in-out infinite; }
+  .sync-dot.error { background:#c0572b; }
+  @keyframes pulse-dot { 0%,100%{opacity:.4} 50%{opacity:1} }
   .tabs { display:flex; gap:.3rem; }
   .tab { background:transparent; border:1px solid transparent; color:var(--muted); font-family:'Josefin Sans',sans-serif; font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; padding:.4rem .8rem; border-radius:3px; cursor:pointer; transition:all .2s; }
   .tab.on { border-color:rgba(201,168,76,.38); color:var(--gold-light); background:rgba(201,168,76,.07); }
@@ -55,7 +74,6 @@
   .panel { display:none; padding:1.4rem; max-width:740px; margin:0 auto; }
   .panel.on { display:block; }
 
-  /* SECTION */
   .sec { font-size:.58rem; letter-spacing:.35em; text-transform:uppercase; color:var(--muted); margin-bottom:.85rem; display:flex; align-items:center; gap:.7rem; }
   .sec::after { content:''; flex:1; height:1px; background:rgba(201,168,76,.1); }
 
@@ -68,7 +86,7 @@
   .badge-new { background:rgba(107,58,42,.2); color:var(--muted); border:1px solid rgba(107,58,42,.3); }
   .badge-exists { background:rgba(201,168,76,.12); color:var(--gold); border:1px solid rgba(201,168,76,.28); }
 
-  /* NÓS REF */
+  /* NÓS */
   .nos-ref { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1.6rem; }
   .nos-chip { font-size:.62rem; letter-spacing:.12em; padding:.3rem .8rem; border-radius:20px; background:rgba(107,58,42,.22); color:#d4a080; border:1px solid rgba(107,58,42,.4); }
   .nos-chip span { opacity:.6; font-size:.55rem; display:block; margin-top:.1rem; }
@@ -97,6 +115,7 @@
   .btn-row { display:flex; gap:.75rem; margin-top:.9rem; }
   .btn-save { flex:1; background:linear-gradient(135deg,var(--gold),#a8822e); color:var(--dark); border:none; font-family:'Josefin Sans',sans-serif; font-size:.68rem; font-weight:600; letter-spacing:.28em; text-transform:uppercase; padding:.82rem; border-radius:3px; cursor:pointer; transition:opacity .2s; }
   .btn-save:hover { opacity:.87; }
+  .btn-save:disabled { opacity:.5; cursor:not-allowed; }
   .btn-ghost { background:transparent; border:1px solid rgba(201,168,76,.18); color:var(--muted); font-family:'Josefin Sans',sans-serif; font-size:.62rem; letter-spacing:.18em; padding:.82rem 1.1rem; border-radius:3px; cursor:pointer; transition:all .2s; }
   .btn-ghost:hover { border-color:rgba(201,168,76,.38); color:var(--parchment); }
   .saved-msg { text-align:center; font-size:.68rem; letter-spacing:.2em; color:var(--gold); margin-top:.75rem; opacity:0; transition:opacity .5s; }
@@ -151,8 +170,8 @@
   .modal-btns { display:flex; gap:.7rem; }
   .btn-copy { flex:1; background:linear-gradient(135deg,var(--gold),#a8822e); color:var(--dark); border:none; font-family:'Josefin Sans',sans-serif; font-size:.68rem; font-weight:600; letter-spacing:.25em; text-transform:uppercase; padding:.78rem; border-radius:3px; cursor:pointer; transition:opacity .2s; }
   .btn-copy:hover { opacity:.87; }
-  .btn-close { background:transparent; border:1px solid rgba(201,168,76,.2); color:var(--muted); font-family:'Josefin Sans',sans-serif; font-size:.65rem; letter-spacing:.18em; padding:.78rem 1rem; border-radius:3px; cursor:pointer; transition:all .2s; }
-  .btn-close:hover { border-color:rgba(201,168,76,.4); color:var(--parchment); }
+  .btn-close-modal { background:transparent; border:1px solid rgba(201,168,76,.2); color:var(--muted); font-family:'Josefin Sans',sans-serif; font-size:.65rem; letter-spacing:.18em; padding:.78rem 1rem; border-radius:3px; cursor:pointer; transition:all .2s; }
+  .btn-close-modal:hover { border-color:rgba(201,168,76,.4); color:var(--parchment); }
   .copy-ok { font-size:.65rem; color:#7aab6e; letter-spacing:.15em; margin-top:.5rem; text-align:center; opacity:0; transition:opacity .4s; }
 
   ::-webkit-scrollbar { width:5px; }
@@ -174,10 +193,19 @@
   </div>
 </div>
 
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-eye">𓂀</div>
+  <div class="loading-text">Carregando <span class="loading-dots"><span>·</span><span>·</span><span>·</span></span></div>
+</div>
+
 <!-- APP -->
 <div id="app">
   <div class="topbar">
-    <div class="topbar-title">𓂀 Diário</div>
+    <div class="topbar-left">
+      <div class="topbar-title">𓂀 Diário</div>
+      <div class="sync-dot" id="sync-dot" title="Sincronizado"></div>
+    </div>
     <div class="tabs">
       <button class="tab on" onclick="showTab('entry')">Entrada</button>
       <button class="tab" onclick="showTab('history')">Histórico</button>
@@ -193,20 +221,16 @@
       <input type="date" id="dpick" onchange="onDateChange()">
       <div class="dbadge badge-new" id="dbadge">○ Nova entrada</div>
     </div>
-
     <div class="sec">Nós do período</div>
     <div class="nos-ref" id="nos-ref"></div>
-
     <div class="sec">Práticas realizadas</div>
     <div class="prac-grid" id="prac-grid"></div>
-
     <div class="sec">Registro do dia</div>
     <span class="flbl">Síntese · reflexões · nós observados · aprendizados</span>
     <textarea id="registro" rows="9" placeholder="O que aconteceu hoje? Como me senti? Que provas enfrentei? Nós que observei — arrogância, criticismo, ira? O que aprendi?"></textarea>
     <div class="fhint">Este campo alimenta a futura carta de degrau.</div>
-
     <div class="btn-row">
-      <button class="btn-save" onclick="saveEntry()">Salvar entrada</button>
+      <button class="btn-save" id="btn-save" onclick="saveEntry()">Salvar entrada</button>
       <button class="btn-ghost" onclick="clearToToday()">Novo dia</button>
     </div>
     <div class="saved-msg" id="saved-msg">✦ Entrada registrada ✦</div>
@@ -235,22 +259,30 @@
 <div class="modal-bg" id="export-modal">
   <div class="modal">
     <div class="modal-title">Exportar dados</div>
-    <div class="modal-sub">Copie o JSON abaixo e guarde em lugar seguro, ou envie ao Claude para gerar uma nova versão do app com o histórico atualizado.</div>
+    <div class="modal-sub">JSON completo do diário — backup de segurança.</div>
     <div class="export-box" id="export-box"></div>
     <div class="modal-btns">
       <button class="btn-copy" onclick="copyExport()">Copiar tudo</button>
-      <button class="btn-close" onclick="closeExport()">Fechar</button>
+      <button class="btn-close-modal" onclick="closeExport()">Fechar</button>
     </div>
-    <div class="copy-ok" id="copy-ok">✦ Copiado para a área de transferência ✦</div>
+    <div class="copy-ok" id="copy-ok">✦ Copiado ✦</div>
   </div>
 </div>
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────
-const PW = "memoria";
-const SK = "diario_ed_v2";
-const PERIODO_INI = "2026-04-10";
-const PERIODO_FIM = "2026-07-10";
+// ── CONFIG ───────────────────────────────────────────────────────────
+const PW           = "memoria";
+const PERIODO_INI  = "2026-04-10";
+const PERIODO_FIM  = "2026-07-10";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyA9VXlx_nLU39RdlNsOXeh8FeNjh__0mX8",
+  authDomain:        "diario-d2647.firebaseapp.com",
+  projectId:         "diario-d2647",
+  storageBucket:     "diario-d2647.firebasestorage.app",
+  messagingSenderId: "916011980742",
+  appId:             "1:916011980742:web:f2097445232dd68da884c7"
+};
 
 const NOS = [
   { nome:"Arrogância", desc:"impaciência · impulsos · palavras a mais" },
@@ -265,36 +297,72 @@ const PRACS = [
   { id:"asana",    icon:"🧘", label:"Asanas" },
   { id:"templo",   icon:"⛩",  label:"Entrada no Templo" },
   { id:"guarda_n", icon:"🌙", label:"Guarda Noturna" },
-  { id:"guarda_d", icon:"☀️", label:"Guarda Diurna" },
 ];
 
-// Dados históricos (% sobre dias totais do período)
+const PLBL = { camara:"🔥 Câmara", tatrak:"👁 Tatrak", oracao:"🕯 Oração", asana:"🧘 Asanas", templo:"⛩ Templo", guarda_n:"🌙 Guarda N." };
+
+// Histórico — % sobre dias totais do período, extraídos dos diários reais
 const HIST = [
-  { label:"ago–out/24",    pcts:{ camara:42, tatrak:38, oracao:55, asana:30, templo:20, guarda_n:12, guarda_d:10 } },
-  { label:"out/24–jan/25", pcts:{ camara:55, tatrak:45, oracao:60, asana:35, templo:22, guarda_n:14, guarda_d:12 } },
-  { label:"jan–abr/25",    pcts:{ camara:82, tatrak:68, oracao:76, asana:50, templo:28, guarda_n:18, guarda_d:16 } },
-  { label:"abr–jul/25",    pcts:{ camara:65, tatrak:60, oracao:70, asana:45, templo:24, guarda_n:15, guarda_d:14 } },
-  { label:"jul–out/25",    pcts:{ camara:72, tatrak:58, oracao:68, asana:38, templo:20, guarda_n:12, guarda_d:11 } },
-  { label:"out/25–jan/26", pcts:{ camara:45, tatrak:38, oracao:52, asana:28, templo:14, guarda_n: 9, guarda_d: 8 } },
-  { label:"jan–abr/26",    pcts:{ camara:71, tatrak:57, oracao:67, asana:36, templo:17, guarda_n:10, guarda_d: 9 } },
+  { label:"ago–out/24",    pcts:{ camara:30, tatrak:20, oracao:35, asana:18, templo:10, guarda_n: 8 } },
+  { label:"out/24–jan/25", pcts:{ camara:35, tatrak:25, oracao:40, asana:20, templo:10, guarda_n:10 } },
+  { label:"jan–abr/25",    pcts:{ camara:24, tatrak:19, oracao:23, asana:22, templo: 2, guarda_n: 8 } },
+  { label:"abr–jul/25",    pcts:{ camara:75, tatrak:46, oracao:56, asana:45, templo: 8, guarda_n: 1 } },
+  { label:"jul–out/25",    pcts:{ camara:46, tatrak:38, oracao:40, asana:33, templo: 2, guarda_n: 1 } },
+  { label:"out/25–jan/26", pcts:{ camara:25, tatrak:16, oracao:15, asana:15, templo: 2, guarda_n: 0 } },
+  { label:"jan–abr/26",    pcts:{ camara:38, tatrak:35, oracao:42, asana:19, templo: 9, guarda_n: 3 } },
 ];
 
-// Seed — histórico real exportado em 21/05/2026
-const SEED = {"2026-04-10":{"practices":["camara","oracao","tatrak","asana"],"registro":"Criticismo: aula de filosofia aplicada — 6 de 20 presentes. Trabalho para trocar a crítica aos ausentes pela valorização dos 6 que vieram num sábado às 8h. Doente, gripado, sem voz no meio do dia. Manteve o sorriso sob a máscara e persistiu até o final das atividades, honrando o compromisso. Percepção: parar de comer na escola — só calorias vazias.","date":"2026-04-10","savedAt":"seeded"},"2026-04-11":{"practices":["oracao"],"registro":"Ira: tensão com Ana Laura por estar doente — perdeu a paciência em alguns momentos, saiu do ambiente para não escalar. Controle parcial. Criticismo: crítica mental aos membros que não assumem papéis. Segundo dia completamente sem voz.","date":"2026-04-11","savedAt":"seeded"},"2026-04-12":{"practices":["camara","oracao","tatrak"],"registro":"Ira/Arrogância: usou meditação como ferramenta para trabalhar as chateações e deixar para lá. Em casa descansando, trabalhou o necessário. Reiniciou os 21 dias de abundância (Deepak Chopra) como suporte ao trabalho interno.","date":"2026-04-12","savedAt":"seeded"},"2026-04-13":{"practices":["camara","oracao","tatrak"],"registro":"Ira: Ana Laura deu tratamento de silêncio — não o rompeu, manteve a compostura mesmo sem voz. Terceiro dia completamente sem voz. Silêncio forçado como prova de contenção.","date":"2026-04-13","savedAt":"seeded"},"2026-04-14":{"practices":["oracao"],"registro":"Ira: reconciliação com Ana Laura — conversa numa boa. Dia de descanso da gripe.","date":"2026-04-14","savedAt":"seeded"},"2026-04-15":{"practices":["oracao"],"registro":"Ira: dia desafiador com o Morfeu — perdeu a paciência em alguns momentos, trabalhou a contenção. Observação valiosa: o silêncio forçado da doença calou também a crítica mental nesses dias.","date":"2026-04-15","savedAt":"seeded"},"2026-04-16":{"practices":["oracao"],"registro":"Consegui conversar com a Ana Laura melhor, sem cair na Ira tanto. Restabelecemos o diálogo entre nós.","date":"2026-04-16","savedAt":"seeded"},"2026-04-17":{"practices":["camara","oracao","tatrak","asana","templo"],"registro":"Hoje não julguei e nem fui crítico, ao menos é o que acho. Tive alguns momentos em que minha paciência foi testada — e fui paciente. Coloquei um pouco de ordem, entregando velhos livros a um amigo. A alimentação ainda precisa melhorar, mas evitei exageros.","date":"2026-04-17","savedAt":"seeded"},"2026-04-19":{"practices":["oracao"],"registro":"Não caí nos nós ontem. Voluntariado de manhã — esforço para não julgar os que recebiam as doações. É com eles, não comigo. À tarde descansei ainda por causa da gripe; à noite trabalhei no Fórum. Está chegando esta semana e tudo caminha bem.","date":"2026-04-19","savedAt":"seeded"},"2026-04-20":{"practices":["camara","oracao","tatrak","asana"],"registro":"Fiquei sabendo de uma crítica — Jander e José Carlos falaram de mim como alguém que deve ter freios colocados. Mexeu pouco comigo. Busquei entender o que queriam dizer e mantê-los mais por dentro, sem me defender ou criticar de volta. Dia de preparações para o Fórum, fazendo os convites finais um a um.","date":"2026-04-20","savedAt":"seeded"},"2026-04-21":{"practices":["oracao"],"registro":"Exame de faixa — avisei aos mestres que ia administrar e foram compreensivos. O exame foi bem. Recebi o Roberto Pertile e a Maria Fernanda em casa — me obrigou a pôr mais ordem no escritório. A alimentação tem melhorado, menos exageros e menos doces.","date":"2026-04-21","savedAt":"seeded"},"2026-04-22":{"practices":["tatrak","oracao"],"registro":"Dia do Fórum da Mãe Terra. Grande conquista deste período. Tudo fluiu bem, muito harmônico. Grande exemplo de Amor e Unidade. Agradeço aos mestres e companheiros de jornada.","date":"2026-04-22","savedAt":"seeded"},"2026-04-23":{"practices":["tatrak","oracao"],"registro":"Dia passeando com o Roberto. Muito construtivo e tranquilo, de comemoração pelo sucesso do Fórum.","date":"2026-04-23","savedAt":"seeded"},"2026-04-25":{"practices":[],"registro":"Dia de muito sucesso com as oficinas da Mãe Terra — mais de 100 pessoas participaram. Um dia lindo e tranquilo.","date":"2026-04-25","savedAt":"seeded"},"2026-04-26":{"practices":["oracao","tatrak"],"registro":"Dia ótimo com a turma do Pense Fora da Caverna. Oportunidade de levar o Roberto no aeroporto.","date":"2026-04-26","savedAt":"seeded"},"2026-04-27":{"date":"2026-04-27","practices":["camara","tatrak","oracao","asana"],"registro":"Ontem acho que não caí fortemente nos nós. Busquei na minha mente limpar as críticas, ser gentil, cortês.\nTive a oportunidade conduzir a reunião de conselho ontem, e a fiz como uma cerimônia deve ser. A Ana Laura me elogiou, disse que eu fui \"bom\" ao mesmo tempo que não tentei agradar ninguem. Tem sido uma época muito feliz e proveitosa da vida.","savedAt":"2026-04-28T13:00:52.315Z"}};
+// Seed — histórico completo exportado em 21/05/2026
+const SEED = {"2026-04-10":{"practices":["camara","oracao","tatrak","asana"],"registro":"Criticismo: aula de filosofia aplicada — 6 de 20 presentes. Trabalho para trocar a crítica aos ausentes pela valorização dos 6 que vieram num sábado às 8h. Doente, gripado, sem voz no meio do dia. Manteve o sorriso sob a máscara e persistiu até o final das atividades, honrando o compromisso. Percepção: parar de comer na escola — só calorias vazias.","date":"2026-04-10"},"2026-04-11":{"practices":["oracao"],"registro":"Ira: tensão com Ana Laura por estar doente — perdeu a paciência em alguns momentos, saiu do ambiente para não escalar. Controle parcial. Criticismo: crítica mental aos membros que não assumem papéis. Segundo dia completamente sem voz.","date":"2026-04-11"},"2026-04-12":{"practices":["camara","oracao","tatrak"],"registro":"Ira/Arrogância: usou meditação como ferramenta para trabalhar as chateações e deixar para lá. Em casa descansando, trabalhou o necessário. Reiniciou os 21 dias de abundância (Deepak Chopra) como suporte ao trabalho interno.","date":"2026-04-12"},"2026-04-13":{"practices":["camara","oracao","tatrak"],"registro":"Ira: Ana Laura deu tratamento de silêncio — não o rompeu, manteve a compostura mesmo sem voz. Terceiro dia completamente sem voz. Silêncio forçado como prova de contenção.","date":"2026-04-13"},"2026-04-14":{"practices":["oracao"],"registro":"Ira: reconciliação com Ana Laura — conversa numa boa. Dia de descanso da gripe.","date":"2026-04-14"},"2026-04-15":{"practices":["oracao"],"registro":"Ira: dia desafiador com o Morfeu — perdeu a paciência em alguns momentos, trabalhou a contenção. Observação valiosa: o silêncio forçado da doença calou também a crítica mental nesses dias.","date":"2026-04-15"},"2026-04-16":{"practices":["oracao"],"registro":"Consegui conversar com a Ana Laura melhor, sem cair na Ira tanto. Restabelecemos o diálogo entre nós.","date":"2026-04-16"},"2026-04-17":{"practices":["camara","oracao","tatrak","asana","templo"],"registro":"Hoje não julguei e nem fui crítico, ao menos é o que acho. Tive alguns momentos em que minha paciência foi testada — e fui paciente. Coloquei um pouco de ordem, entregando velhos livros a um amigo. A alimentação ainda precisa melhorar, mas evitei exageros.","date":"2026-04-17"},"2026-04-19":{"practices":["oracao"],"registro":"Não caí nos nós ontem. Voluntariado de manhã — esforço para não julgar os que recebiam as doações. É com eles, não comigo. À tarde descansei ainda por causa da gripe; à noite trabalhei no Fórum. Está chegando esta semana e tudo caminha bem.","date":"2026-04-19"},"2026-04-20":{"practices":["camara","oracao","tatrak","asana"],"registro":"Fiquei sabendo de uma crítica — Jander e José Carlos falaram de mim como alguém que deve ter freios colocados. Mexeu pouco comigo. Busquei entender o que queriam dizer e mantê-los mais por dentro, sem me defender ou criticar de volta. Dia de preparações para o Fórum, fazendo os convites finais um a um.","date":"2026-04-20"},"2026-04-21":{"practices":["oracao"],"registro":"Exame de faixa — avisei aos mestres que ia administrar e foram compreensivos. O exame foi bem. Recebi o Roberto Pertile e a Maria Fernanda em casa — me obrigou a pôr mais ordem no escritório. A alimentação tem melhorado, menos exageros e menos doces.","date":"2026-04-21"},"2026-04-22":{"practices":["tatrak","oracao"],"registro":"Dia do Fórum da Mãe Terra. Grande conquista deste período. Tudo fluiu bem, muito harmônico. Grande exemplo de Amor e Unidade. Agradeço aos mestres e companheiros de jornada.","date":"2026-04-22"},"2026-04-23":{"practices":["tatrak","oracao"],"registro":"Dia passeando com o Roberto. Muito construtivo e tranquilo, de comemoração pelo sucesso do Fórum.","date":"2026-04-23"},"2026-04-25":{"practices":[],"registro":"Dia de muito sucesso com as oficinas da Mãe Terra — mais de 100 pessoas participaram. Um dia lindo e tranquilo.","date":"2026-04-25"},"2026-04-26":{"practices":["oracao","tatrak"],"registro":"Dia ótimo com a turma do Pense Fora da Caverna. Oportunidade de levar o Roberto no aeroporto.","date":"2026-04-26"},"2026-04-27":{"practices":["camara","tatrak","oracao","asana"],"registro":"Ontem acho que não caí fortemente nos nós. Busquei na minha mente limpar as críticas, ser gentil, cortês.\nTive a oportunidade conduzir a reunião de conselho ontem, e a fiz como uma cerimônia deve ser. A Ana Laura me elogiou, disse que eu fui \"bom\" ao mesmo tempo que não tentei agradar ninguem. Tem sido uma época muito feliz e proveitosa da vida.","date":"2026-04-27"},"2026-04-28":{"practices":["camara","tatrak","oracao","asana"],"registro":"Hoje eu tive um momento de Ira com o Morfeu. Ele fez xixi no meio da copa, proximo de plantas, e briguei com ele e bati nele.\nPerdi, embora não completamente, o controle de mim mesmo. Sabia que poderia chamá-lo atenção, mas não da forma que fiz. Como diria Platão: o corrigiria, se não estivesse irado. Mas o corrigi, estando irado.\n\nDe resto, o dia correu bem, e com as pessoas tive mais paciência e não fui crítico.","date":"2026-04-28"},"2026-04-29":{"practices":["tatrak","oracao"],"registro":"Ontem tive uma aula difícil, porque houveram críticas e uma polemizacao desnecessária. Eu poderia ter conduzido com mais habilidade? Provavelmente sim, mas fiz o que tenho feito e tem dado certo. Mas nem sempre dá. Tive que aceitar algumas críticas e ser paciente, o que me fez lembrar durante o momento que recebia as críticas, do Nó da Impaciência que trabalho aqui na carta. Foi bom ter lembrado que pensei na hora em trabalhar a compaixão, por mais que eu não concordasse e achasse aerogante a posição da pessoa. No fim das contas foi bom, foi uma boa oportunidade para mim e acho que embora eu não tenha sido perfeito, me comportei bem e soube conduzir razoavelmente a situação para não impactar outros negativamente.","date":"2026-04-29"},"2026-04-30":{"practices":["camara","tatrak","oracao","templo"],"registro":"Ontem foi um dia muito especial.\nNa quarta que foi uma aula muito difícil, ontem foi a finalização de uma turma, que embora pequena, é muito valorosa. Que me agradeceu com flores e muito carinho.\nMas o mais importante: vi que estão conseguindo transformar suas vidas, pelos relatos que recebi. Isso é o que me faz mais feliz: trazer a chama para outros corações, para despertar essas almas. Isso nos renova muito.\nMe fez pensar sobre querer estar sempre na ponta, sempre em contato com os provacionistas.","date":"2026-04-30"},"2026-05-04":{"practices":["oracao"],"registro":"Ontem foi um dia de viagem para a Bett Educar. E foi bem desafiador, porque eu cheguei da trilha da Lapinha-Tabuleiro e ja tive que ir me organizar, organizar para ir para SP e ficar mais uns bons dias fora e sem ver a Ana. Deu bastante saudade, dela, de casa, da escola.\nMas, olhar para Mercúrio no meu braço e pedir a benção ao deus dos viajantes e comerciantes me fez lembrar que era importante estar aqui, para continuar viabilizando meu discipulado.\nTeve outra razão no fim do dia desafiadora: o resultado com a Ave Nova foi bem ruim e tivemos prejuízo. Tive que fazer uma análise tarde da noite para poder verificar o que está ocorrendo. Tivemos muitos atendimentos e pouco resultado, e acho que isso pode ter a ver com a própria Ave Nova. Já levei isso para o Arlen. Mas me fez questionar a viabilidade de médio prazo, e até mesmo curto. Vamos ver o que conseguimos com ele.","date":"2026-05-04"},"2026-05-06":{"practices":[],"registro":"Esses dias de Bett Educar eu não tenho feito práticas.\nSão dias fora de casa, sem privacidade, que não estou acostumado - mas isso é uma desculpa a ser vencida.\nQuanto aos nós, acho que caí esses dias em um pouco de impaciência, crítica e ira sim. Especialmente com o Rodrigo, meu sócio, porque o acho teimoso e com dificuldade em mudar.\nMas, devo aprender a deixar cada um com sua experiência.","date":"2026-05-06"},"2026-05-08":{"practices":["camara"],"registro":"Na sexta eu tive um dia mais introspectivo, fui no parque Ibirapuera em SP, conheci o pavilhão japonês. E depois tivemos a cerimônia de oito de maio de renovação de votos do conselho nacional como discípulos. É sempre muito bom estar com pessoas tão dedicadas ao nosso Ideal.","date":"2026-05-08"},"2026-05-09":{"practices":["camara"],"registro":"Hoje foi um dia de muita oportunidade de reflexão.\nOito de maio é um dia especial. Dia do discípulo, dia de renovar votos.\nOuvi do Ricardo que o Jander realmente quer botar freios - que pena. Senti por ele, é o jeito dele, mas é uma pena que ele pense assim. Não é o que o nosso Ideal precisa. Mas o Karma e os Mestres sabem o que fazem.\nParece que realmente busca defeitos, é crítico, mas isso só tem que me fazer refletir a aprender a me renovar e a harmonizar com as diferenças.","date":"2026-05-09"},"2026-05-10":{"practices":[],"registro":"Esse final de semana em geral foi um de muita conversa, de ouvir muito sobre tudo que estava acontecendo e aconteceu no passado. E meu mestre abriu muitas histórias para mim - os erros e acertos do passado e como foram sendo corrigidos. Tenho muita admiração pelos antigos, mas o pedido dos nossos mestres é que sejamos melhores e abramos espaço para os que virão que devem também ser melhores que nós.","date":"2026-05-10"},"2026-05-11":{"practices":["camara","tatrak","oracao","templo"],"registro":"Hoje foi um dia que me propus a fazer jejum, mas não consegui manter.\nTerminei a tatuagem de Hermes.\nFoi um bom dia, mas estou ainda cansado, afinal foram muitos dias fora.\nMas fiz também uma prática de ordem, e busquei a organizar tudo que estava ao meu redor em casa antes de começar a trabalhar.","date":"2026-05-11"},"2026-05-12":{"practices":["camara","tatrak","oracao","asana"],"registro":"Hoje foi um ótimo dia\nPalestra recorde com 52 pessoas na escola\nTive também reunião com o Arlen para ajustar as coisas na Granja\nFiz minhas práticas, preparei-me bem para a palestra\nTudo caminha\nSou grato por tudo na minha vida e por todas as oportunidades de servir\nAcho que não fui grosseiro nem crítico com ninguém\nSó sentimento de gratidão hoje aos deuses, a Deus e aos mestres","date":"2026-05-12"},"2026-05-13":{"practices":["camara","tatrak","oracao","asana"],"registro":"Hoje foi um bom dia, de boas aulas\nNão tive momentos de Ira, Impaciência ou arrogância - eu acho.","date":"2026-05-13"},"2026-05-14":{"practices":["camara","tatrak","oracao","asana"],"registro":"Ontem foi um dia muito bom também, de aula boa com o Pense Fora da Caverna, boa reunião de conselho da redigir, em que fui em Pará de Minas com a Ana e também surgiu a ideia do negócio com ela, com o nome Minerva Presentes Simbólicos.\nTudo caminhando bem","date":"2026-05-14"},"2026-05-15":{"practices":["oracao"],"registro":"Hoje mais um dia de boas conversas, reunioese atividades.\nDei um curso de inteligência emocional na creche; envolvi a Simone como voluntária, e estamos começando um trabalho juntos","date":"2026-05-15"},"2026-05-16":{"practices":["oracao"],"registro":"No MAM conversei com o Jander, o que foi bom, trabalhei bastante a questão da harmonização da convivência e chegamos a um entendimento comum da semana da filosofia. Foi um bom exercício de paciência","date":"2026-05-16"},"2026-05-17":{"practices":[],"registro":"Este dia não fiz práticas.\nEstava no MAM. Dormi na minha mãe na noite anterior, o que foi bom.\nTreinamos no MAM e fizemos a prática dos fogueiras.","date":"2026-05-17"},"2026-05-18":{"practices":["camara","tatrak","oracao","asana"],"registro":"Hoje foi um dia intenso de trabalho, que começou as 6h\nEstou buscando abrir novas frentes de trabalho, inclusive de educação corporativa.\nMas foi um bom dia, e acho que não teve tantos criticismo, ira ou impaciência.\nMelhorando a cada dia eu acho","date":"2026-05-18"},"2026-05-19":{"practices":["camara","tatrak","oracao","asana","templo"],"registro":"Hoje foi um ótimo dia, de muito trabalho tentando desenvolver a vertical de educação corporativa para a Mercúrio. Envolvi a Paloma nisso e ela pareceu entrar de frente. Dei uma aula muito bem dialogada com meus discipulos na turma Apis e desenvolvemos bem juntos. Também trabalhei bastante realizando entrevistas, espero que dê frutos.","date":"2026-05-19"},"2026-05-20":{"practices":["tatrak","oracao"],"registro":"Ontem foi um dia também de bom trabalho.\nEstive na escola recebendo um irlandes GM, que foi legal. Avançamos no aluguel da casa ao lado. E fiz muitas entrevistas de trabalho. Também mais um dia sem grandes incidentes","date":"2026-05-20"}};
 
-// ── STORAGE ──────────────────────────────────────────────
-function load() { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch { return {}; } }
-function persist(d) { localStorage.setItem(SK, JSON.stringify(d)); }
+// ── FIREBASE ─────────────────────────────────────────────────────────
+let db;
+let cache = {}; // memória local espelhando o Firestore
 
-function seedOnce() {
-  const d = load(); let changed = false;
-  for (const [k,v] of Object.entries(SEED)) {
-    if (!d[k]) { d[k] = { ...v, date:k }; changed = true; }
-  }
-  if (changed) persist(d);
+function initFirebase() {
+  const fbApp = firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore(fbApp);
 }
 
-// ── DATE ─────────────────────────────────────────────────
+function setSyncing(state) {
+  const dot = document.getElementById('sync-dot');
+  if (state === 'ok')      { dot.className='sync-dot'; dot.title='Sincronizado'; }
+  if (state === 'syncing') { dot.className='sync-dot syncing'; dot.title='Salvando...'; }
+  if (state === 'error')   { dot.className='sync-dot error'; dot.title='Erro de sincronização'; }
+}
+
+async function loadFromFirestore() {
+  const snap = await db.collection('entries').get();
+  cache = {};
+  snap.forEach(doc => { cache[doc.id] = doc.data(); });
+  return cache;
+}
+
+async function seedFirestore() {
+  const batch = db.batch();
+  for (const [date, entry] of Object.entries(SEED)) {
+    const ref = db.collection('entries').doc(date);
+    batch.set(ref, { ...entry, date, savedAt: entry.savedAt || 'seeded' });
+  }
+  await batch.commit();
+  cache = { ...SEED };
+}
+
+async function saveToFirestore(date, entry) {
+  setSyncing('syncing');
+  try {
+    await db.collection('entries').doc(date).set(entry);
+    cache[date] = entry;
+    setSyncing('ok');
+    return true;
+  } catch(e) {
+    setSyncing('error');
+    console.error('Firestore save error:', e);
+    return false;
+  }
+}
+
+// ── DATE ─────────────────────────────────────────────────────────────
 function today() {
   return new Date().toLocaleString('en-CA', { timeZone:'America/Sao_Paulo', year:'numeric', month:'2-digit', day:'2-digit' }).slice(0,10);
 }
@@ -305,25 +373,40 @@ function fmtLong(iso) {
   return `${+d} de ${mo[+m]} de ${y}`;
 }
 function fmtShort(iso) { if (!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
-function daysBetween(ini, fim) { return Math.round((new Date(fim)-new Date(ini))/86400000); }
+function daysBetween(a,b) { return Math.round((new Date(b)-new Date(a))/86400000); }
 
-// ── AUTH ─────────────────────────────────────────────────
+// ── AUTH ─────────────────────────────────────────────────────────────
 document.getElementById('login-btn').onclick = tryLogin;
-document.getElementById('pw').addEventListener('keydown', e => { if (e.key==='Enter') tryLogin(); });
-function tryLogin() {
-  if (document.getElementById('pw').value === PW) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    seedOnce();
-    initApp();
-  } else {
+document.getElementById('pw').addEventListener('keydown', e => { if(e.key==='Enter') tryLogin(); });
+
+async function tryLogin() {
+  if (document.getElementById('pw').value !== PW) {
     document.getElementById('err').style.display = 'block';
     document.getElementById('pw').value = '';
     document.getElementById('pw').focus();
+    return;
   }
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('loading-screen').style.display = 'flex';
+
+  try {
+    initFirebase();
+    const data = await loadFromFirestore();
+    // Se banco vazio, faz seed
+    if (Object.keys(data).length === 0) {
+      await seedFirestore();
+    }
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    // Fallback: continua sem sync
+  }
+
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
 }
 
-// ── INIT ─────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────────────
 function initApp() {
   document.getElementById('nos-ref').innerHTML = NOS.map(n =>
     `<div class="nos-chip"><strong>${n.nome}</strong><span>${n.desc}</span></div>`
@@ -343,16 +426,16 @@ function initApp() {
 
   document.getElementById('dpick').value = today();
   onDateChange();
+  setSyncing('ok');
 }
 
-// ── DATE CHANGE ───────────────────────────────────────────
+// ── DATE CHANGE ───────────────────────────────────────────────────────
 function onDateChange() {
   const v = document.getElementById('dpick').value;
   if (!v) return;
   document.getElementById('date-big').textContent = fmtLong(v);
-  const data = load();
   const badge = document.getElementById('dbadge');
-  if (data[v]) {
+  if (cache[v]) {
     badge.textContent = '● Entrada existente';
     badge.className = 'dbadge badge-exists';
     loadEntry(v);
@@ -364,24 +447,31 @@ function onDateChange() {
 }
 
 function loadEntry(iso) {
-  const e = load()[iso]; if (!e) return;
+  const e = cache[iso]; if (!e) return;
   document.getElementById('registro').value = e.registro || '';
   document.querySelectorAll('.pchk').forEach(el =>
     el.classList.toggle('on', (e.practices||[]).includes(el.dataset.id))
   );
 }
 
-// ── SAVE ──────────────────────────────────────────────────
-function saveEntry() {
+// ── SAVE ─────────────────────────────────────────────────────────────
+async function saveEntry() {
   const date = document.getElementById('dpick').value; if (!date) return;
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+
   const practices = [...document.querySelectorAll('.pchk.on')].map(el => el.dataset.id);
-  const d = load();
-  d[date] = { date, practices, registro: document.getElementById('registro').value, savedAt: new Date().toISOString() };
-  persist(d);
-  const msg = document.getElementById('saved-msg');
-  msg.style.opacity = '1';
-  setTimeout(() => msg.style.opacity = '0', 2600);
-  onDateChange();
+  const entry = { date, practices, registro: document.getElementById('registro').value, savedAt: new Date().toISOString() };
+
+  const ok = await saveToFirestore(date, entry);
+  btn.disabled = false;
+
+  if (ok) {
+    const msg = document.getElementById('saved-msg');
+    msg.style.opacity = '1';
+    setTimeout(() => msg.style.opacity='0', 2600);
+    onDateChange();
+  }
 }
 
 function clearToToday() { document.getElementById('dpick').value = today(); onDateChange(); }
@@ -390,35 +480,32 @@ function clearFields() {
   document.querySelectorAll('.pchk').forEach(el => el.classList.remove('on'));
 }
 
-// ── TABS ──────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────────────────
 function showTab(name) {
   document.querySelectorAll('.tab').forEach((b,i) =>
-    b.classList.toggle('on', ['entry','history','stats','export'][i]===name)
+    b.classList.toggle('on', ['entry','history','stats'][i]===name)
   );
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
   const panel = document.getElementById('panel-'+name);
   if (panel) panel.classList.add('on');
   if (name==='history') renderHistory();
-  if (name==='stats') renderStats();
+  if (name==='stats')   renderStats();
 }
 
-// ── HISTORY ───────────────────────────────────────────────
-const PLBL = { camara:"🔥 Câmara", tatrak:"👁 Tatrak", oracao:"🕯 Oração", asana:"🧘 Asanas", templo:"⛩ Templo", guarda_n:"🌙 Guarda N.", guarda_d:"☀️ Guarda D." };
-
+// ── HISTORY ───────────────────────────────────────────────────────────
 function renderHistory() {
-  const data = load();
-  const q = document.getElementById('search').value.toLowerCase();
-  const keys = Object.keys(data).sort().reverse();
+  const q = (document.getElementById('search').value||'').toLowerCase();
+  const keys = Object.keys(cache).sort().reverse();
   const filtered = keys.filter(k => {
     if (!q) return true;
-    const e = data[k];
+    const e = cache[k];
     return fmtShort(k).includes(q) || (e.registro||'').toLowerCase().includes(q) ||
       (e.practices||[]).some(p => (PLBL[p]||'').toLowerCase().includes(q));
   });
   const el = document.getElementById('hist-list');
   if (!filtered.length) { el.innerHTML='<div class="empty">Nenhuma entrada encontrada.</div>'; return; }
   el.innerHTML = filtered.map(k => {
-    const e = data[k];
+    const e = cache[k];
     const pills = (e.practices||[]).map(p=>`<span class="pill">${PLBL[p]||p}</span>`).join('');
     const prev = (e.registro||'').slice(0,130)+((e.registro||'').length>130?'…':'');
     const body = e.registro ? `<p>${e.registro.replace(/\n/g,'<br>')}</p>` : '';
@@ -433,38 +520,35 @@ function renderHistory() {
   }).join('');
 }
 
-// ── STATS ─────────────────────────────────────────────────
+// ── STATS ─────────────────────────────────────────────────────────────
 function renderStats() {
-  const data = load();
-  const entries = Object.entries(data).filter(([k])=> k>=PERIODO_INI && k<=PERIODO_FIM).map(([,v])=>v);
+  const entries = Object.entries(cache).filter(([k])=> k>=PERIODO_INI && k<=PERIODO_FIM).map(([,v])=>v);
   const n = entries.length;
-  const totalDays = daysBetween(PERIODO_INI, PERIODO_FIM);
+  const totalDays   = daysBetween(PERIODO_INI, PERIODO_FIM);
+  const daysElapsed = Math.min(daysBetween(PERIODO_INI, today()), totalDays);
 
   const counts = {}; PRACS.forEach(p=>counts[p.id]=0);
   entries.forEach(e=>(e.practices||[]).forEach(p=>{ if(counts[p]!==undefined) counts[p]++; }));
 
   document.getElementById('period-lbl').textContent =
-    `${fmtShort(PERIODO_INI)} – ${fmtShort(PERIODO_FIM)}  ·  ${totalDays} dias no período  ·  ${n} entradas registradas`;
+    `${fmtShort(PERIODO_INI)} – ${fmtShort(PERIODO_FIM)}  ·  ${daysElapsed} de ${totalDays} dias decorridos  ·  ${n} entradas registradas`;
 
   document.getElementById('stats-cards').innerHTML = [
-    { ico:'📖', n:n,              lbl:'Entradas',  sub:`de ${totalDays} dias` },
-    { ico:'🔥', n:counts.camara,  lbl:'Câmaras',   sub:`${Math.round(counts.camara/totalDays*100)}% dos dias` },
-    { ico:'👁',  n:counts.tatrak,  lbl:'Tatraks',   sub:`${Math.round(counts.tatrak/totalDays*100)}% dos dias` },
-    { ico:'🕯', n:counts.oracao,  lbl:'Orações',   sub:`${Math.round(counts.oracao/totalDays*100)}% dos dias` },
-    { ico:'🧘', n:counts.asana,   lbl:'Asanas',    sub:`${Math.round(counts.asana/totalDays*100)}% dos dias` },
-    { ico:'⛩',  n:counts.templo,  lbl:'Templo',    sub:`${Math.round(counts.templo/totalDays*100)}% dos dias` },
-    { ico:'🌙', n:counts.guarda_n,lbl:'Guarda N.',  sub:`${Math.round(counts.guarda_n/totalDays*100)}% dos dias` },
-    { ico:'☀️', n:counts.guarda_d,lbl:'Guarda D.',  sub:`${Math.round(counts.guarda_d/totalDays*100)}% dos dias` },
+    { ico:'📖', n:n,              lbl:'Entradas',  sub:`de ${daysElapsed} dias` },
+    { ico:'🔥', n:counts.camara,  lbl:'Câmaras',   sub:`${Math.round(counts.camara/daysElapsed*100)}% dos dias` },
+    { ico:'👁',  n:counts.tatrak,  lbl:'Tatraks',   sub:`${Math.round(counts.tatrak/daysElapsed*100)}% dos dias` },
+    { ico:'🕯', n:counts.oracao,  lbl:'Orações',   sub:`${Math.round(counts.oracao/daysElapsed*100)}% dos dias` },
+    { ico:'🧘', n:counts.asana,   lbl:'Asanas',    sub:`${Math.round(counts.asana/daysElapsed*100)}% dos dias` },
+    { ico:'⛩',  n:counts.templo,  lbl:'Templo',    sub:`${Math.round(counts.templo/daysElapsed*100)}% dos dias` },
+    { ico:'🌙', n:counts.guarda_n,lbl:'Guarda N.',  sub:`${Math.round(counts.guarda_n/daysElapsed*100)}% dos dias` },
   ].map(c=>`<div class="scard"><div class="sico">${c.ico}</div><span class="snum">${c.n}</span><div class="slbl">${c.lbl}</div><div class="ssub">${c.sub}</div></div>`).join('');
 
   const prev = HIST[HIST.length-1];
   document.getElementById('bars-current').innerHTML = PRACS.map(p => {
-    const pct = Math.round((counts[p.id]/totalDays)*100);
-    const pp = prev ? prev.pcts[p.id] : null;
+    const pct = Math.round((counts[p.id]/daysElapsed)*100);
+    const pp  = prev ? prev.pcts[p.id] : null;
     const diff = pp!==null ? pct-pp : null;
-    const deltaHtml = diff!==null
-      ? `<span class="delta ${diff>=0?'up':'dn'}">${diff>=0?'▲':'▼'}${Math.abs(diff)}%</span>`
-      : '';
+    const deltaHtml = diff!==null ? `<span class="delta ${diff>=0?'up':'dn'}">${diff>=0?'▲':'▼'}${Math.abs(diff)}%</span>` : '';
     return `<div class="bar-row">
       <div class="bname">${p.icon} ${p.label}</div>
       <div class="btrack"><div class="bfill" style="width:${pct}%"></div></div>
@@ -472,11 +556,12 @@ function renderStats() {
     </div>`;
   }).join('');
 
+  // Histórico — mais recente primeiro
   document.getElementById('bars-history').innerHTML = PRACS.map(p => {
     const max = Math.max(...HIST.map(h=>h.pcts[p.id]||0), 1);
-    const rows = HIST.map(h => {
+    const rows = [...HIST].reverse().map(h => {
       const pct = h.pcts[p.id]||0;
-      const w = Math.round((pct/max)*100);
+      const w   = Math.round((pct/max)*100);
       return `<div class="hist-mini-row">
         <div class="hist-label">${h.label}</div>
         <div class="hist-bar"><div class="hist-fill" style="width:${w}%"></div></div>
@@ -487,38 +572,25 @@ function renderStats() {
   }).join('');
 }
 
-// ── EXPORT ────────────────────────────────────────────────
+// ── EXPORT ────────────────────────────────────────────────────────────
 function openExport() {
-  const json = localStorage.getItem(SK) || '{}';
-  document.getElementById('export-box').textContent = json;
+  document.getElementById('export-box').textContent = JSON.stringify(cache, null, 2);
   document.getElementById('export-modal').classList.add('open');
   document.getElementById('copy-ok').style.opacity = '0';
 }
-
 function closeExport() {
   document.getElementById('export-modal').classList.remove('open');
   showTab('entry');
 }
-
 function copyExport() {
-  const text = document.getElementById('export-box').textContent;
-  navigator.clipboard.writeText(text).then(() => {
+  navigator.clipboard.writeText(document.getElementById('export-box').textContent).then(() => {
     const ok = document.getElementById('copy-ok');
     ok.style.opacity = '1';
-    setTimeout(() => ok.style.opacity = '0', 2500);
-  }).catch(() => {
-    // fallback: select the text
-    const box = document.getElementById('export-box');
-    const range = document.createRange();
-    range.selectNodeContents(box);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
+    setTimeout(() => ok.style.opacity='0', 2500);
   });
 }
-
-// Fechar modal clicando fora
 document.getElementById('export-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeExport();
+  if (e.target===this) closeExport();
 });
 </script>
 </body>
