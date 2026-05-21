@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diário ED — Rafael</title>
+<title>Diário</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@300;400;600&display=swap');
 
@@ -31,10 +31,9 @@
 
   /* LOGIN */
   #login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:2rem; }
-  .eye { font-size:3.2rem; margin-bottom:1rem; animation:breathe 4s ease-in-out infinite; }
+  .eye { font-size:3.2rem; margin-bottom:1.2rem; animation:breathe 4s ease-in-out infinite; }
   @keyframes breathe { 0%,100%{opacity:.55} 50%{opacity:1} }
-  .login-title { font-family:'IM Fell English',serif; font-size:1.8rem; color:var(--gold); letter-spacing:.15em; margin-bottom:2.5rem; text-align:center; }
-  .login-sub { font-size:.7rem; letter-spacing:.32em; color:var(--muted); text-transform:uppercase; margin-bottom:2.5rem; text-align:center; }
+  .login-title { font-family:'IM Fell English',serif; font-size:1.9rem; color:var(--gold); letter-spacing:.15em; margin-bottom:2.5rem; text-align:center; }
   .login-box { background:var(--dark-mid); border:1px solid rgba(201,168,76,.2); border-radius:4px; padding:2rem; width:100%; max-width:340px; }
   .login-box label { font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:.5rem; }
   .login-box input[type=password] { width:100%; background:var(--dark); border:1px solid rgba(201,168,76,.22); color:var(--parchment); font-family:'Josefin Sans',sans-serif; font-size:1rem; padding:.75rem 1rem; border-radius:3px; outline:none; transition:border-color .3s; letter-spacing:.25em; margin-bottom:1.2rem; }
@@ -45,7 +44,7 @@
 
   /* APP */
   #app { display:none; }
-  .topbar { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.4rem; border-bottom:1px solid rgba(201,168,76,.12); background:rgba(26,21,16,.85); position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.4rem; border-bottom:1px solid rgba(201,168,76,.12); background:rgba(26,21,16,.85); position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); gap:.5rem; flex-wrap:wrap; }
   .topbar-title { font-family:'IM Fell English',serif; font-size:1.05rem; color:var(--gold); letter-spacing:.1em; }
   .tabs { display:flex; gap:.3rem; }
   .tab { background:transparent; border:1px solid transparent; color:var(--muted); font-family:'Josefin Sans',sans-serif; font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; padding:.4rem .8rem; border-radius:3px; cursor:pointer; transition:all .2s; }
@@ -62,7 +61,7 @@
 
   /* DATE ROW */
   .date-row { display:flex; align-items:center; gap:.9rem; margin-bottom:1.5rem; flex-wrap:wrap; }
-  .date-big { font-family:'IM Fell English',serif; font-size:1.45rem; color:var(--gold); flex:1; min-width:200px; }
+  .date-big { font-family:'IM Fell English',serif; font-size:1.45rem; color:var(--gold); flex:1; min-width:180px; }
   input[type=date] { background:var(--dark-mid); border:1px solid rgba(201,168,76,.22); color:var(--parchment); font-family:'Josefin Sans',sans-serif; font-size:.72rem; padding:.48rem .7rem; border-radius:3px; outline:none; cursor:pointer; }
   input[type=date]:focus { border-color:var(--gold); }
   .dbadge { font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; padding:.22rem .55rem; border-radius:2px; white-space:nowrap; }
@@ -74,14 +73,9 @@
   .nos-chip { font-size:.62rem; letter-spacing:.12em; padding:.3rem .8rem; border-radius:20px; background:rgba(107,58,42,.22); color:#d4a080; border:1px solid rgba(107,58,42,.4); }
   .nos-chip span { opacity:.6; font-size:.55rem; display:block; margin-top:.1rem; }
 
-  /* PRACTICES — key fix: div not label, no nested input */
-  .prac-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:.55rem; margin-bottom:1.7rem; }
-  .pchk {
-    display:flex; align-items:center; gap:.7rem;
-    background:var(--dark-mid); border:1px solid rgba(201,168,76,.1);
-    border-radius:4px; padding:.7rem .95rem; cursor:pointer;
-    transition:all .2s; user-select:none;
-  }
+  /* PRACTICES */
+  .prac-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(165px,1fr)); gap:.55rem; margin-bottom:1.7rem; }
+  .pchk { display:flex; align-items:center; gap:.7rem; background:var(--dark-mid); border:1px solid rgba(201,168,76,.1); border-radius:4px; padding:.7rem .95rem; cursor:pointer; transition:all .2s; user-select:none; }
   .pchk:hover { border-color:rgba(201,168,76,.28); background:rgba(201,168,76,.04); }
   .pchk.on { border-color:rgba(201,168,76,.48); background:rgba(201,168,76,.1); }
   .cbox { width:17px; height:17px; border:1px solid rgba(201,168,76,.38); border-radius:2px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .18s; }
@@ -97,7 +91,7 @@
   textarea { width:100%; background:var(--dark-mid); border:1px solid rgba(201,168,76,.16); color:var(--parchment); font-family:'IM Fell English',serif; font-size:.95rem; line-height:1.82; padding:1rem 1.15rem; border-radius:4px; outline:none; resize:vertical; min-height:200px; transition:border-color .3s; }
   textarea:focus { border-color:rgba(201,168,76,.45); }
   textarea::placeholder { color:rgba(138,112,96,.45); font-style:italic; }
-  .fhint { font-size:.62rem; color:var(--muted); margin-top:.38rem; font-style:italic; opacity:.7; }
+  .fhint { font-size:.62rem; color:var(--muted); margin-top:.38rem; font-style:italic; opacity:.7; margin-bottom:1.2rem; }
 
   /* BUTTONS */
   .btn-row { display:flex; gap:.75rem; margin-top:.9rem; }
@@ -124,12 +118,13 @@
   .empty { text-align:center; padding:3rem 1rem; color:var(--muted); font-family:'IM Fell English',serif; font-size:.98rem; font-style:italic; }
 
   /* STATS */
-  .stats-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:.9rem; margin-bottom:1.8rem; }
-  .scard { background:var(--dark-mid); border:1px solid rgba(201,168,76,.13); border-radius:4px; padding:1.1rem .9rem; text-align:center; }
-  .sico { font-size:1.3rem; margin-bottom:.35rem; }
-  .snum { font-family:'IM Fell English',serif; font-size:1.85rem; color:var(--gold); display:block; line-height:1; margin-bottom:.25rem; }
+  .stats-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(115px,1fr)); gap:.85rem; margin-bottom:1.8rem; }
+  .scard { background:var(--dark-mid); border:1px solid rgba(201,168,76,.13); border-radius:4px; padding:1rem .85rem; text-align:center; }
+  .sico { font-size:1.25rem; margin-bottom:.32rem; }
+  .snum { font-family:'IM Fell English',serif; font-size:1.75rem; color:var(--gold); display:block; line-height:1; margin-bottom:.22rem; }
   .slbl { font-size:.55rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
-  .period-lbl { font-size:.65rem; color:var(--muted); letter-spacing:.12em; margin-bottom:1.3rem; }
+  .ssub { font-size:.55rem; color:var(--gold); opacity:.7; margin-top:.2rem; }
+  .period-lbl { font-size:.65rem; color:var(--muted); letter-spacing:.1em; margin-bottom:1.3rem; }
   .bar-row { display:flex; align-items:center; gap:.75rem; margin-bottom:.65rem; }
   .bname { font-size:.68rem; letter-spacing:.06em; color:var(--parchment-dark); width:170px; flex-shrink:0; }
   .btrack { flex:1; height:7px; background:rgba(201,168,76,.09); border-radius:4px; overflow:hidden; }
@@ -138,7 +133,6 @@
   .delta { font-size:.57rem; margin-left:.3rem; }
   .delta.up { color:#7aab6e; }
   .delta.dn { color:#c0572b; }
-
   .hist-prac { margin-bottom:1.6rem; }
   .hist-prac-title { font-size:.65rem; letter-spacing:.15em; color:var(--parchment-dark); margin-bottom:.55rem; }
   .hist-mini-row { display:flex; align-items:center; gap:.5rem; margin-bottom:.28rem; }
@@ -146,6 +140,20 @@
   .hist-bar { flex:1; height:5px; background:rgba(201,168,76,.08); border-radius:3px; overflow:hidden; }
   .hist-fill { height:100%; background:linear-gradient(90deg,#a8822e,var(--gold)); border-radius:3px; }
   .hist-pct { font-size:.58rem; color:var(--muted); width:28px; text-align:right; flex-shrink:0; }
+
+  /* EXPORT MODAL */
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:200; align-items:center; justify-content:center; padding:1.5rem; }
+  .modal-bg.open { display:flex; }
+  .modal { background:var(--dark-mid); border:1px solid rgba(201,168,76,.25); border-radius:6px; padding:1.8rem; width:100%; max-width:520px; }
+  .modal-title { font-family:'IM Fell English',serif; font-size:1.1rem; color:var(--gold); margin-bottom:.5rem; }
+  .modal-sub { font-size:.68rem; color:var(--muted); margin-bottom:1.2rem; line-height:1.6; }
+  .export-box { width:100%; background:var(--dark); border:1px solid rgba(201,168,76,.2); color:var(--muted); font-family:monospace; font-size:.72rem; padding:.8rem; border-radius:3px; min-height:100px; max-height:220px; overflow-y:auto; word-break:break-all; white-space:pre-wrap; margin-bottom:1rem; }
+  .modal-btns { display:flex; gap:.7rem; }
+  .btn-copy { flex:1; background:linear-gradient(135deg,var(--gold),#a8822e); color:var(--dark); border:none; font-family:'Josefin Sans',sans-serif; font-size:.68rem; font-weight:600; letter-spacing:.25em; text-transform:uppercase; padding:.78rem; border-radius:3px; cursor:pointer; transition:opacity .2s; }
+  .btn-copy:hover { opacity:.87; }
+  .btn-close { background:transparent; border:1px solid rgba(201,168,76,.2); color:var(--muted); font-family:'Josefin Sans',sans-serif; font-size:.65rem; letter-spacing:.18em; padding:.78rem 1rem; border-radius:3px; cursor:pointer; transition:all .2s; }
+  .btn-close:hover { border-color:rgba(201,168,76,.4); color:var(--parchment); }
+  .copy-ok { font-size:.65rem; color:#7aab6e; letter-spacing:.15em; margin-top:.5rem; text-align:center; opacity:0; transition:opacity .4s; }
 
   ::-webkit-scrollbar { width:5px; }
   ::-webkit-scrollbar-track { background:var(--dark); }
@@ -158,7 +166,6 @@
 <div id="login-screen">
   <div class="eye">𓂀</div>
   <div class="login-title">Diário</div>
-  
   <div class="login-box">
     <label for="pw">Senha de acesso</label>
     <input type="password" id="pw" placeholder="••••••••" autocomplete="current-password">
@@ -170,11 +177,12 @@
 <!-- APP -->
 <div id="app">
   <div class="topbar">
-    <div class="topbar-title">𓂀 Diário ED</div>
+    <div class="topbar-title">𓂀 Diário</div>
     <div class="tabs">
-      <button class="tab on" onclick="showTab('entry')">Nova Entrada</button>
+      <button class="tab on" onclick="showTab('entry')">Entrada</button>
       <button class="tab" onclick="showTab('history')">Histórico</button>
       <button class="tab" onclick="showTab('stats')">Estatísticas</button>
+      <button class="tab" onclick="openExport()">Exportar</button>
     </div>
   </div>
 
@@ -186,7 +194,7 @@
       <div class="dbadge badge-new" id="dbadge">○ Nova entrada</div>
     </div>
 
-    <div class="sec">Nós do período — referência</div>
+    <div class="sec">Nós do período</div>
     <div class="nos-ref" id="nos-ref"></div>
 
     <div class="sec">Práticas realizadas</div>
@@ -194,8 +202,8 @@
 
     <div class="sec">Registro do dia</div>
     <span class="flbl">Síntese · reflexões · nós observados · aprendizados</span>
-    <textarea id="registro" rows="9" placeholder="O que aconteceu hoje? Como me senti? Que provas enfrentei? Nós que observei em mim mesmo — arrogância, criticismo, ira? O que aprendi? Síntese e aprendizados do período quando relevante..."></textarea>
-    <div class="fhint" style="margin-bottom:1.2rem">Este campo alimenta a futura carta de degrau.</div>
+    <textarea id="registro" rows="9" placeholder="O que aconteceu hoje? Como me senti? Que provas enfrentei? Nós que observei — arrogância, criticismo, ira? O que aprendi?"></textarea>
+    <div class="fhint">Este campo alimenta a futura carta de degrau.</div>
 
     <div class="btn-row">
       <button class="btn-save" onclick="saveEntry()">Salvar entrada</button>
@@ -216,18 +224,30 @@
     <div class="sec">Trimestre atual — 10/04 a 10/07/2026</div>
     <div class="period-lbl" id="period-lbl"></div>
     <div class="stats-cards" id="stats-cards"></div>
-
     <div class="sec">Frequência por prática · período atual</div>
     <div id="bars-current"></div>
-
     <div class="sec">Evolução histórica por prática</div>
     <div id="bars-history"></div>
   </div>
 </div>
 
+<!-- EXPORT MODAL -->
+<div class="modal-bg" id="export-modal">
+  <div class="modal">
+    <div class="modal-title">Exportar dados</div>
+    <div class="modal-sub">Copie o JSON abaixo e guarde em lugar seguro, ou envie ao Claude para gerar uma nova versão do app com o histórico atualizado.</div>
+    <div class="export-box" id="export-box"></div>
+    <div class="modal-btns">
+      <button class="btn-copy" onclick="copyExport()">Copiar tudo</button>
+      <button class="btn-close" onclick="closeExport()">Fechar</button>
+    </div>
+    <div class="copy-ok" id="copy-ok">✦ Copiado para a área de transferência ✦</div>
+  </div>
+</div>
+
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────────
-const PW = "conhecererelembrar";
+// ── CONFIG ───────────────────────────────────────────────
+const PW = "memoria";
 const SK = "diario_ed_v2";
 const PERIODO_INI = "2026-04-10";
 const PERIODO_FIM = "2026-07-10";
@@ -248,7 +268,7 @@ const PRACS = [
   { id:"guarda_d", icon:"☀️", label:"Guarda Diurna" },
 ];
 
-// Dados históricos (% dos dias com entrada em que a prática apareceu)
+// Dados históricos (% sobre dias totais do período)
 const HIST = [
   { label:"ago–out/24",    pcts:{ camara:42, tatrak:38, oracao:55, asana:30, templo:20, guarda_n:12, guarda_d:10 } },
   { label:"out/24–jan/25", pcts:{ camara:55, tatrak:45, oracao:60, asana:35, templo:22, guarda_n:14, guarda_d:12 } },
@@ -259,37 +279,22 @@ const HIST = [
   { label:"jan–abr/26",    pcts:{ camara:71, tatrak:57, oracao:67, asana:36, templo:17, guarda_n:10, guarda_d: 9 } },
 ];
 
-// Seed — dados do diário enviado (10/04 a 26/04/2026)
-const SEED = {
-  "2026-04-10":{ practices:["camara","oracao","tatrak","asana"], registro:"Criticismo: aula de filosofia aplicada — 6 de 20 presentes. Trabalho para trocar a crítica aos ausentes pela valorização dos 6 que vieram num sábado às 8h. Doente, gripado, sem voz no meio do dia. Manteve o sorriso sob a máscara e persistiu até o final das atividades, honrando o compromisso. Percepção: parar de comer na escola — só calorias vazias." },
-  "2026-04-11":{ practices:["oracao"], registro:"Ira: tensão com Ana Laura por estar doente — perdeu a paciência em alguns momentos, saiu do ambiente para não escalar. Controle parcial. Criticismo: crítica mental aos membros que não assumem papéis. Segundo dia completamente sem voz." },
-  "2026-04-12":{ practices:["camara","oracao","tatrak"], registro:"Ira/Arrogância: usou meditação como ferramenta para trabalhar as chateações e deixar para lá. Em casa descansando, trabalhou o necessário. Reiniciou os 21 dias de abundância (Deepak Chopra) como suporte ao trabalho interno." },
-  "2026-04-13":{ practices:["camara","oracao","tatrak"], registro:"Ira: Ana Laura deu tratamento de silêncio — não o rompeu, manteve a compostura mesmo sem voz. Terceiro dia completamente sem voz. Silêncio forçado como prova de contenção." },
-  "2026-04-14":{ practices:["oracao"], registro:"Ira: reconciliação com Ana Laura — conversa numa boa. Dia de descanso da gripe." },
-  "2026-04-15":{ practices:["oracao"], registro:"Ira: dia desafiador com o Morfeu — perdeu a paciência em alguns momentos, trabalhou a contenção. Observação valiosa: o silêncio forçado da doença calou também a crítica mental nesses dias." },
-  "2026-04-16":{ practices:["oracao"], registro:"Consegui conversar com a Ana Laura melhor, sem cair na Ira tanto. Restabelecemos o diálogo entre nós." },
-  "2026-04-17":{ practices:["camara","oracao","tatrak","asana","templo"], registro:"Hoje não julguei e nem fui crítico, ao menos é o que acho. Tive alguns momentos em que minha paciência foi testada — e fui paciente. Coloquei um pouco de ordem, entregando velhos livros a um amigo. A alimentação ainda precisa melhorar, mas evitei exageros." },
-  "2026-04-19":{ practices:["oracao"], registro:"Não caí nos nós ontem. Voluntariado de manhã — esforço para não julgar os que recebiam as doações. É com eles, não comigo. À tarde descansei ainda por causa da gripe; à noite trabalhei no Fórum. Está chegando esta semana e tudo caminha bem." },
-  "2026-04-20":{ practices:["camara","oracao","tatrak","asana"], registro:"Fiquei sabendo de uma crítica — Jander e José Carlos falaram de mim como alguém que deve ter freios colocados. Mexeu pouco comigo. Busquei entender o que queriam dizer e mantê-los mais por dentro, sem me defender ou criticar de volta. Dia de preparações para o Fórum, fazendo os convites finais um a um." },
-  "2026-04-21":{ practices:["oracao"], registro:"Exame de faixa — avisei aos mestres que ia administrar e foram compreensivos. O exame foi bem. Recebi o Roberto Pertile e a Maria Fernanda em casa — me obrigou a pôr mais ordem no escritório. A alimentação tem melhorado, menos exageros e menos doces." },
-  "2026-04-22":{ practices:["tatrak","oracao"], registro:"Dia do Fórum da Mãe Terra. Grande conquista deste período. Tudo fluiu bem, muito harmônico. Grande exemplo de Amor e Unidade. Agradeço aos mestres e companheiros de jornada." },
-  "2026-04-23":{ practices:["tatrak","oracao"], registro:"Dia passeando com o Roberto. Muito construtivo e tranquilo, de comemoração pelo sucesso do Fórum." },
-  "2026-04-25":{ practices:[], registro:"Dia de muito sucesso com as oficinas da Mãe Terra — mais de 100 pessoas participaram. Um dia lindo e tranquilo." },
-  "2026-04-26":{ practices:["oracao","tatrak"], registro:"Dia ótimo com a turma do Pense Fora da Caverna. Oportunidade de levar o Roberto no aeroporto." },
-};
+// Seed — histórico real exportado em 21/05/2026
+const SEED = {"2026-04-10":{"practices":["camara","oracao","tatrak","asana"],"registro":"Criticismo: aula de filosofia aplicada — 6 de 20 presentes. Trabalho para trocar a crítica aos ausentes pela valorização dos 6 que vieram num sábado às 8h. Doente, gripado, sem voz no meio do dia. Manteve o sorriso sob a máscara e persistiu até o final das atividades, honrando o compromisso. Percepção: parar de comer na escola — só calorias vazias.","date":"2026-04-10","savedAt":"seeded"},"2026-04-11":{"practices":["oracao"],"registro":"Ira: tensão com Ana Laura por estar doente — perdeu a paciência em alguns momentos, saiu do ambiente para não escalar. Controle parcial. Criticismo: crítica mental aos membros que não assumem papéis. Segundo dia completamente sem voz.","date":"2026-04-11","savedAt":"seeded"},"2026-04-12":{"practices":["camara","oracao","tatrak"],"registro":"Ira/Arrogância: usou meditação como ferramenta para trabalhar as chateações e deixar para lá. Em casa descansando, trabalhou o necessário. Reiniciou os 21 dias de abundância (Deepak Chopra) como suporte ao trabalho interno.","date":"2026-04-12","savedAt":"seeded"},"2026-04-13":{"practices":["camara","oracao","tatrak"],"registro":"Ira: Ana Laura deu tratamento de silêncio — não o rompeu, manteve a compostura mesmo sem voz. Terceiro dia completamente sem voz. Silêncio forçado como prova de contenção.","date":"2026-04-13","savedAt":"seeded"},"2026-04-14":{"practices":["oracao"],"registro":"Ira: reconciliação com Ana Laura — conversa numa boa. Dia de descanso da gripe.","date":"2026-04-14","savedAt":"seeded"},"2026-04-15":{"practices":["oracao"],"registro":"Ira: dia desafiador com o Morfeu — perdeu a paciência em alguns momentos, trabalhou a contenção. Observação valiosa: o silêncio forçado da doença calou também a crítica mental nesses dias.","date":"2026-04-15","savedAt":"seeded"},"2026-04-16":{"practices":["oracao"],"registro":"Consegui conversar com a Ana Laura melhor, sem cair na Ira tanto. Restabelecemos o diálogo entre nós.","date":"2026-04-16","savedAt":"seeded"},"2026-04-17":{"practices":["camara","oracao","tatrak","asana","templo"],"registro":"Hoje não julguei e nem fui crítico, ao menos é o que acho. Tive alguns momentos em que minha paciência foi testada — e fui paciente. Coloquei um pouco de ordem, entregando velhos livros a um amigo. A alimentação ainda precisa melhorar, mas evitei exageros.","date":"2026-04-17","savedAt":"seeded"},"2026-04-19":{"practices":["oracao"],"registro":"Não caí nos nós ontem. Voluntariado de manhã — esforço para não julgar os que recebiam as doações. É com eles, não comigo. À tarde descansei ainda por causa da gripe; à noite trabalhei no Fórum. Está chegando esta semana e tudo caminha bem.","date":"2026-04-19","savedAt":"seeded"},"2026-04-20":{"practices":["camara","oracao","tatrak","asana"],"registro":"Fiquei sabendo de uma crítica — Jander e José Carlos falaram de mim como alguém que deve ter freios colocados. Mexeu pouco comigo. Busquei entender o que queriam dizer e mantê-los mais por dentro, sem me defender ou criticar de volta. Dia de preparações para o Fórum, fazendo os convites finais um a um.","date":"2026-04-20","savedAt":"seeded"},"2026-04-21":{"practices":["oracao"],"registro":"Exame de faixa — avisei aos mestres que ia administrar e foram compreensivos. O exame foi bem. Recebi o Roberto Pertile e a Maria Fernanda em casa — me obrigou a pôr mais ordem no escritório. A alimentação tem melhorado, menos exageros e menos doces.","date":"2026-04-21","savedAt":"seeded"},"2026-04-22":{"practices":["tatrak","oracao"],"registro":"Dia do Fórum da Mãe Terra. Grande conquista deste período. Tudo fluiu bem, muito harmônico. Grande exemplo de Amor e Unidade. Agradeço aos mestres e companheiros de jornada.","date":"2026-04-22","savedAt":"seeded"},"2026-04-23":{"practices":["tatrak","oracao"],"registro":"Dia passeando com o Roberto. Muito construtivo e tranquilo, de comemoração pelo sucesso do Fórum.","date":"2026-04-23","savedAt":"seeded"},"2026-04-25":{"practices":[],"registro":"Dia de muito sucesso com as oficinas da Mãe Terra — mais de 100 pessoas participaram. Um dia lindo e tranquilo.","date":"2026-04-25","savedAt":"seeded"},"2026-04-26":{"practices":["oracao","tatrak"],"registro":"Dia ótimo com a turma do Pense Fora da Caverna. Oportunidade de levar o Roberto no aeroporto.","date":"2026-04-26","savedAt":"seeded"},"2026-04-27":{"date":"2026-04-27","practices":["camara","tatrak","oracao","asana"],"registro":"Ontem acho que não caí fortemente nos nós. Busquei na minha mente limpar as críticas, ser gentil, cortês.\nTive a oportunidade conduzir a reunião de conselho ontem, e a fiz como uma cerimônia deve ser. A Ana Laura me elogiou, disse que eu fui \"bom\" ao mesmo tempo que não tentei agradar ninguem. Tem sido uma época muito feliz e proveitosa da vida.","savedAt":"2026-04-28T13:00:52.315Z"}};
 
-// ── STORAGE ─────────────────────────────────────────────────────────
+// ── STORAGE ──────────────────────────────────────────────
 function load() { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch { return {}; } }
 function persist(d) { localStorage.setItem(SK, JSON.stringify(d)); }
+
 function seedOnce() {
   const d = load(); let changed = false;
   for (const [k,v] of Object.entries(SEED)) {
-    if (!d[k]) { d[k] = { ...v, date:k, savedAt:"seeded" }; changed = true; }
+    if (!d[k]) { d[k] = { ...v, date:k }; changed = true; }
   }
   if (changed) persist(d);
 }
 
-// ── DATE ────────────────────────────────────────────────────────────
+// ── DATE ─────────────────────────────────────────────────
 function today() {
   return new Date().toLocaleString('en-CA', { timeZone:'America/Sao_Paulo', year:'numeric', month:'2-digit', day:'2-digit' }).slice(0,10);
 }
@@ -300,8 +305,9 @@ function fmtLong(iso) {
   return `${+d} de ${mo[+m]} de ${y}`;
 }
 function fmtShort(iso) { if (!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
+function daysBetween(ini, fim) { return Math.round((new Date(fim)-new Date(ini))/86400000); }
 
-// ── AUTH ────────────────────────────────────────────────────────────
+// ── AUTH ─────────────────────────────────────────────────
 document.getElementById('login-btn').onclick = tryLogin;
 document.getElementById('pw').addEventListener('keydown', e => { if (e.key==='Enter') tryLogin(); });
 function tryLogin() {
@@ -317,14 +323,12 @@ function tryLogin() {
   }
 }
 
-// ── INIT ────────────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────
 function initApp() {
-  // Nós ref
   document.getElementById('nos-ref').innerHTML = NOS.map(n =>
     `<div class="nos-chip"><strong>${n.nome}</strong><span>${n.desc}</span></div>`
   ).join('');
 
-  // Prac grid — using divs, no label/input, toggle via onclick
   document.getElementById('prac-grid').innerHTML = PRACS.map(p =>
     `<div class="pchk" data-id="${p.id}" onclick="this.classList.toggle('on')">
       <div class="cbox">
@@ -341,7 +345,7 @@ function initApp() {
   onDateChange();
 }
 
-// ── DATE CHANGE ──────────────────────────────────────────────────────
+// ── DATE CHANGE ───────────────────────────────────────────
 function onDateChange() {
   const v = document.getElementById('dpick').value;
   if (!v) return;
@@ -362,12 +366,12 @@ function onDateChange() {
 function loadEntry(iso) {
   const e = load()[iso]; if (!e) return;
   document.getElementById('registro').value = e.registro || '';
-  document.querySelectorAll('.pchk').forEach(el => {
-    el.classList.toggle('on', (e.practices||[]).includes(el.dataset.id));
-  });
+  document.querySelectorAll('.pchk').forEach(el =>
+    el.classList.toggle('on', (e.practices||[]).includes(el.dataset.id))
+  );
 }
 
-// ── SAVE ─────────────────────────────────────────────────────────────
+// ── SAVE ──────────────────────────────────────────────────
 function saveEntry() {
   const date = document.getElementById('dpick').value; if (!date) return;
   const practices = [...document.querySelectorAll('.pchk.on')].map(el => el.dataset.id);
@@ -380,26 +384,25 @@ function saveEntry() {
   onDateChange();
 }
 
-function clearToToday() {
-  document.getElementById('dpick').value = today();
-  onDateChange();
-}
-
+function clearToToday() { document.getElementById('dpick').value = today(); onDateChange(); }
 function clearFields() {
   document.getElementById('registro').value = '';
   document.querySelectorAll('.pchk').forEach(el => el.classList.remove('on'));
 }
 
-// ── TABS ──────────────────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────
 function showTab(name) {
-  document.querySelectorAll('.tab').forEach((b,i) => b.classList.toggle('on', ['entry','history','stats'][i]===name));
+  document.querySelectorAll('.tab').forEach((b,i) =>
+    b.classList.toggle('on', ['entry','history','stats','export'][i]===name)
+  );
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-  document.getElementById('panel-'+name).classList.add('on');
+  const panel = document.getElementById('panel-'+name);
+  if (panel) panel.classList.add('on');
   if (name==='history') renderHistory();
   if (name==='stats') renderStats();
 }
 
-// ── HISTORY ───────────────────────────────────────────────────────────
+// ── HISTORY ───────────────────────────────────────────────
 const PLBL = { camara:"🔥 Câmara", tatrak:"👁 Tatrak", oracao:"🕯 Oração", asana:"🧘 Asanas", templo:"⛩ Templo", guarda_n:"🌙 Guarda N.", guarda_d:"☀️ Guarda D." };
 
 function renderHistory() {
@@ -430,34 +433,33 @@ function renderHistory() {
   }).join('');
 }
 
-// ── STATS ─────────────────────────────────────────────────────────────
+// ── STATS ─────────────────────────────────────────────────
 function renderStats() {
   const data = load();
   const entries = Object.entries(data).filter(([k])=> k>=PERIODO_INI && k<=PERIODO_FIM).map(([,v])=>v);
   const n = entries.length;
+  const totalDays = daysBetween(PERIODO_INI, PERIODO_FIM);
 
   const counts = {}; PRACS.forEach(p=>counts[p.id]=0);
   entries.forEach(e=>(e.practices||[]).forEach(p=>{ if(counts[p]!==undefined) counts[p]++; }));
 
   document.getElementById('period-lbl').textContent =
-    `${fmtShort(PERIODO_INI)} – ${fmtShort(PERIODO_FIM)}  ·  ${n} dias com entrada registrada`;
+    `${fmtShort(PERIODO_INI)} – ${fmtShort(PERIODO_FIM)}  ·  ${totalDays} dias no período  ·  ${n} entradas registradas`;
 
-  // Overview cards
   document.getElementById('stats-cards').innerHTML = [
-    { ico:'📖', n:n,            lbl:'Entradas' },
-    { ico:'🔥', n:counts.camara, lbl:'Câmaras' },
-    { ico:'👁',  n:counts.tatrak, lbl:'Tatraks' },
-    { ico:'🕯', n:counts.oracao, lbl:'Orações' },
-    { ico:'🧘', n:counts.asana,  lbl:'Asanas' },
-    { ico:'⛩',  n:counts.templo, lbl:'Templo' },
-    { ico:'🌙', n:counts.guarda_n, lbl:'Guarda N.' },
-    { ico:'☀️', n:counts.guarda_d, lbl:'Guarda D.' },
-  ].map(c=>`<div class="scard"><div class="sico">${c.ico}</div><span class="snum">${c.n}</span><div class="slbl">${c.lbl}</div></div>`).join('');
+    { ico:'📖', n:n,              lbl:'Entradas',  sub:`de ${totalDays} dias` },
+    { ico:'🔥', n:counts.camara,  lbl:'Câmaras',   sub:`${Math.round(counts.camara/totalDays*100)}% dos dias` },
+    { ico:'👁',  n:counts.tatrak,  lbl:'Tatraks',   sub:`${Math.round(counts.tatrak/totalDays*100)}% dos dias` },
+    { ico:'🕯', n:counts.oracao,  lbl:'Orações',   sub:`${Math.round(counts.oracao/totalDays*100)}% dos dias` },
+    { ico:'🧘', n:counts.asana,   lbl:'Asanas',    sub:`${Math.round(counts.asana/totalDays*100)}% dos dias` },
+    { ico:'⛩',  n:counts.templo,  lbl:'Templo',    sub:`${Math.round(counts.templo/totalDays*100)}% dos dias` },
+    { ico:'🌙', n:counts.guarda_n,lbl:'Guarda N.',  sub:`${Math.round(counts.guarda_n/totalDays*100)}% dos dias` },
+    { ico:'☀️', n:counts.guarda_d,lbl:'Guarda D.',  sub:`${Math.round(counts.guarda_d/totalDays*100)}% dos dias` },
+  ].map(c=>`<div class="scard"><div class="sico">${c.ico}</div><span class="snum">${c.n}</span><div class="slbl">${c.lbl}</div><div class="ssub">${c.sub}</div></div>`).join('');
 
-  // Current period bars with delta vs previous trimester
   const prev = HIST[HIST.length-1];
   document.getElementById('bars-current').innerHTML = PRACS.map(p => {
-    const pct = n>0 ? Math.round((counts[p.id]/n)*100) : 0;
+    const pct = Math.round((counts[p.id]/totalDays)*100);
     const pp = prev ? prev.pcts[p.id] : null;
     const diff = pp!==null ? pct-pp : null;
     const deltaHtml = diff!==null
@@ -470,7 +472,6 @@ function renderStats() {
     </div>`;
   }).join('');
 
-  // Historical — one mini-chart per practice
   document.getElementById('bars-history').innerHTML = PRACS.map(p => {
     const max = Math.max(...HIST.map(h=>h.pcts[p.id]||0), 1);
     const rows = HIST.map(h => {
@@ -482,12 +483,43 @@ function renderStats() {
         <div class="hist-pct">${pct}%</div>
       </div>`;
     }).join('');
-    return `<div class="hist-prac">
-      <div class="hist-prac-title">${p.icon} ${p.label}</div>
-      ${rows}
-    </div>`;
+    return `<div class="hist-prac"><div class="hist-prac-title">${p.icon} ${p.label}</div>${rows}</div>`;
   }).join('');
 }
+
+// ── EXPORT ────────────────────────────────────────────────
+function openExport() {
+  const json = localStorage.getItem(SK) || '{}';
+  document.getElementById('export-box').textContent = json;
+  document.getElementById('export-modal').classList.add('open');
+  document.getElementById('copy-ok').style.opacity = '0';
+}
+
+function closeExport() {
+  document.getElementById('export-modal').classList.remove('open');
+  showTab('entry');
+}
+
+function copyExport() {
+  const text = document.getElementById('export-box').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const ok = document.getElementById('copy-ok');
+    ok.style.opacity = '1';
+    setTimeout(() => ok.style.opacity = '0', 2500);
+  }).catch(() => {
+    // fallback: select the text
+    const box = document.getElementById('export-box');
+    const range = document.createRange();
+    range.selectNodeContents(box);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  });
+}
+
+// Fechar modal clicando fora
+document.getElementById('export-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeExport();
+});
 </script>
 </body>
 </html>
